@@ -2,7 +2,6 @@ from typing import Optional
 from datetime import datetime, timedelta
 
 from jose import JWTError, jwt
-from pydantic import BaseModel
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
@@ -13,16 +12,6 @@ JWT_ALGORITHM = "HS256"
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-class Token(BaseModel):
-    access_token: str
-    refresh_token: Optional[str] = None
-    token_type: str
-
-
-class TokenData(BaseModel):
-    public_id: Optional[str] = None
 
 
 def credentials_exception(msg: str):

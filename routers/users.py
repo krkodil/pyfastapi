@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from db import schemas, crud
 from db.data_base import get_db
-from auth.handler import Token, create_jwt_token, get_refresh_token, credentials_exception
+from auth.handler import create_jwt_token, get_refresh_token, credentials_exception
 from auth.handler import get_jwt_user, pwd_context
 
 from fastapi.security import OAuth2PasswordRequestForm
@@ -27,7 +27,7 @@ def authenticate_user(db, email: str, password: str):
     return user
 
 
-@router.post("/auth/login", response_model=Token)
+@router.post("/auth/login", response_model=schemas.Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
                                  db: Session = Depends(get_db)):
     user = authenticate_user(db, form_data.username, form_data.password)
@@ -44,7 +44,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 
-@router.post("/auth/refresh", response_model=Token)
+@router.post("/auth/refresh", response_model=schemas.Token)
 async def refresh_access_token(token: dict = Depends(get_refresh_token),
                                db: Session = Depends(get_db)):
     public_id: str = token.get("sub")
@@ -73,8 +73,8 @@ def read_users(skip: int = 0, limit: int = 100,
                public_id: str = Depends(get_jwt_user),
                db: Session = Depends(get_db)):
 
-    user = crud.get_app_user(db, public_id)
-    if not user.is_admin:
+    app_user = crud.get_app_user(db, public_id)
+    if app_user is None or not app_user.is_admin:
         raise credentials_exception("Not administrator")
 
     users = crud.get_users(db, skip=skip, limit=limit)
@@ -82,7 +82,14 @@ def read_users(skip: int = 0, limit: int = 100,
 
 
 @router.get("/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
+def read_user(user_id: int,
+              public_id: str = Depends(get_jwt_user),
+              db: Session = Depends(get_db)):
+
+    app_user = crud.get_app_user(db, public_id=public_id)
+    if app_user is None:
+        raise credentials_exception("Missing/suspended account")
+
     db_user = crud.get_user(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")

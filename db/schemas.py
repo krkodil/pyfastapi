@@ -3,6 +3,16 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
+class Token(BaseModel):
+    access_token: str
+    refresh_token: Optional[str] = None
+    token_type: str
+
+
+class TokenData(BaseModel):
+    public_id: Optional[str] = None
+
+
 class ItemBase(BaseModel):
     title: str
     description: Optional[str] = None
