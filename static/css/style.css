@@ -1,0 +1,95 @@
+﻿body {
+    background: #111 no-repeat;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #FFF;
+    font-size: 22px;
+}
+
+    h2 a {
+        color: #0184e3;
+        text-decoration: none;
+    }
+
+        h2 a:hover {
+            color: #0184e3;
+            text-decoration: underline;
+        }
+
+.container {
+    width: 650px;
+    margin: auto;
+    color: #FFF;
+    font-size: 20px;
+    text-align: center;
+}
+
+    .container h3 {
+        font-size: 20px;
+    }
+
+    .container > .btn {
+        margin: 15px 0;
+    }
+
+#loadingImg {
+    display: none;
+    position: absolute;
+    margin: auto;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.validCredential h3 {
+    float: left;
+    text-decoration: underline;
+}
+
+.validCredential div {
+    clear: both;
+}
+
+.validCredential p {
+    float: left;
+    padding-right: 10px;
+}
+
+::-webkit-input-placeholder {
+    color: #ccc;
+}
+
+#myModal {
+    color: #1fa67b;
+}
+
+    #myModal table {
+        position: relative;
+        margin: auto;
+    }
+
+        #myModal table input {
+            border-radius: 5px;
+            border: solid 1px #CCC;
+            margin: 10px;
+            padding: 3px 10px;
+            color: #000;
+        }
+
+            #myModal table input[type="button"] {
+                width: 94%;
+                background: #1fa67b;
+                color: #FFF;
+            }
+
+        #messageSpan {
+            float: left;
+            font-size: 12px;
+            color: #f00;
+            padding-top: 8px;
+            padding-left: 23px;
+            text-align: left;
+        }

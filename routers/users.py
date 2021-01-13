@@ -16,9 +16,9 @@ router = APIRouter()
 def authenticate_user(db, email: str, password: str):
     user = crud.get_user_by_email(db, email=email)
     if not user:
-        raise credentials_exception
+        raise credentials_exception("Invalid username/password")
     if not pwd_context.verify(password, user.hashed_password):
-        raise credentials_exception
+        raise credentials_exception("Invalid username/password")
     if not user.is_active:
         raise HTTPException(
             status_code=status.HTTP_423_LOCKED,
@@ -28,9 +28,9 @@ def authenticate_user(db, email: str, password: str):
 
 
 @router.post("/auth/login", response_model=schemas.Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),
+async def login_for_access_token(login_form: schemas.UserCreate,
                                  db: Session = Depends(get_db)):
-    user = authenticate_user(db, form_data.username, form_data.password)
+    user = authenticate_user(db, login_form.email, login_form.password)
 
     access_token_data: dict = {"sub": user.public_id}
     if user.is_admin:

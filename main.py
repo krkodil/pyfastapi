@@ -1,4 +1,7 @@
 from fastapi import Depends, FastAPI
+from fastapi.staticfiles import StaticFiles
+from starlette.responses import FileResponse
+
 from internal import admin
 from routers import items, users
 
@@ -17,6 +20,12 @@ app.include_router(
     dependencies=[Depends(get_admin_token)],
     responses={418: {"description": "I'm a teapot"}},
 )
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/")
+async def read_index():
+    return FileResponse('static/index.html')
 
 if __name__ == '__main__':
     import uvicorn
