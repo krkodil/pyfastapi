@@ -9,7 +9,7 @@
     <link href="/static/css/style.css" rel="stylesheet" /></head>
 <body>
 <form method="post" action="./" id="form1">
-    <h1>Login Feature with Bootstrap Modal and jQuery AJAX</h1>
+    <h1>FastAPI Login with Bootstrap Modal and jQuery AJAX</h1>
 
     <div class="container">
         <!-- Bootstrap Modal -->
@@ -20,12 +20,12 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Log in with your Username</h4>
+                        <h4 class="modal-title">Log in with your credentials</h4>
                     </div>
                     <div class="modal-body">
                         <table>
                             <tbody>
-                            <tr><td><input type="text" id="userNameTextBox" placeholder="Username" /></td></tr>
+                            <tr><td><input type="text" id="userNameTextBox" placeholder="Email" /></td></tr>
                             <tr><td><input type="text" id="passwordTextBox" placeholder="Password" /></td></tr>
                             <tr><td><input type="button" id="submitButton" value="Login" /></td></tr>
                             <tr><td><img id="loadingImg" src="/static/images/loading.gif" /></td></tr>
@@ -42,6 +42,10 @@
             </div>
         </div>
         <!-- END Bootstrap Modal -->
+
+        <pre id="token-data">
+
+        </pre>
     </div>
 
     <script src="/static/js/jquery.min.js"></script>
@@ -59,16 +63,21 @@
                 });
 
                 $("#submitButton").click(function (e) {
-                    var usr = $("#userNameTextBox").val();
+                    var eml = $("#userNameTextBox").val();
                     var pas = $("#passwordTextBox").val();
                     $.ajax({
                         type: "POST",
                         url: "/auth/login",
                         contentType: "application/json; charset=utf-8",
-                        data: JSON.stringify({email: usr, password: pas}),
+                        data: JSON.stringify({email: eml, password: pas}),
                         dataType: "json",
                         success: function (result, status, xhr) {
-                            $("#messageSpan").text("Login Successful!");
+                            var response = JSON.parse(xhr.responseText);
+                            $("#token-data").text(
+                                "access_token: "+response.access_token+"\n"+
+                                "refresh_token: "+response.refresh_token+"\n"+
+                                "token_type: "+response.token_type
+                            );
                             $('#myModal').modal('hide');
                         },
                         error: function (xhr, status, error) {
